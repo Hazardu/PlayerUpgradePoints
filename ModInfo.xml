@@ -1,0 +1,18 @@
+<Mod ID="PlayerUpgradePoints">
+  <Compatible>1.09</Compatible>
+  <Button Standard="P" ID="ToggleMenu">
+    <Name>
+      <EN>Toggle Menu</EN>
+    </Name>
+    <Description>
+      <EN>Use this key or press the button in top right corner</EN>
+    </Description>
+  </Button>
+  <Name>
+    <EN>Player Upgrade Points server</EN>
+  </Name>
+  <Description>
+    <EN>Leveling just like in RPG game. With extra error logs</EN>
+  </Description>
+  <Version>2.7.4.4</Version>
+</Mod>
