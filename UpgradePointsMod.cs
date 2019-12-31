@@ -304,10 +304,9 @@ namespace PlayerUpgradePoints
 
             FillAmountCurrent = 0;
             BarFillSpeed = 0;
-            if (CoopExpShare.instance == null)
-            {
-                CoopExpShare.instance = new GameObject("KillListener").AddComponent<CoopExpShare>();
-            }
+       
+          new GameObject("KillListener").AddComponent<CoopExpShare>();
+     
         }
 
     

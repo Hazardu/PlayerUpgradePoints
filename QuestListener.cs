@@ -22,37 +22,36 @@ namespace PlayerUpgradePoints
 
             EventRegistry.Player.Subscribe(TfEvent.CraftedItem, OnCraftItem);
         }
-     
+
         public void OnTreeCut(object o)
         {
             try
             {
-              //  ModAPI.Log.Write("Giving Exp for cutting tree");
-
 
                 Quests.UpdateActiveQuests(QuestObjective.Type.CutTree, 1, QuestObjective.Enemy.None, -1, Quests.HeldWeapon, "");
 
-                int i2 = UnityEngine.Random.Range((int)8, 15);
-                TreeHealth treehealth = (TreeHealth)o;
-                Transform t = treehealth.transform;
-                List<CoopPlayerRemoteSetup> setupstoGiveExp = new List<CoopPlayerRemoteSetup>();
-                for (int a = 0; a < CoopExpShare.instance.setup.Count; a++)
+                int xp = UnityEngine.Random.Range((int)8, 20);
+                Vector3 pos = transform.position;
+                int count = TheForest.Utils.Scene.SceneTracker.allPlayers.Count(go => (go.transform.position - pos).sqrMagnitude < 250 * 250);
+                bool giveLocalPlayer = false;
+
+                if ((LocalPlayer.Transform.position - pos).sqrMagnitude < 250 * 250)
                 {
-                 
-                        setupstoGiveExp.Add(CoopExpShare.instance.setup[a]);
-                 
-                }
-                int x =1;
-               
-                i2 = Mathf.RoundToInt((float)i2 / (x + setupstoGiveExp.Count));
-                for (int a = 0; a < setupstoGiveExp.Count; a++)
-                {
-                    setupstoGiveExp[a].HitShark(-(i2 + 1000000000));
+                    giveLocalPlayer = true;
+                    count++;
                 }
 
-                if (x == 1)
+
+                if (count == 0)
+                    return;
+
+
+                xp = Mathf.RoundToInt((float)xp / (count));
+                Network.NetworkManager.SendExpCommand(xp, pos, false);
+
+                if (giveLocalPlayer)
                 {
-                    UpgradePointsMod.instance.AddXP(i2, false);
+                    UpgradePointsMod.instance.AddXP(xp, false);
                 }
             }
             catch (Exception ex)
@@ -63,37 +62,38 @@ namespace PlayerUpgradePoints
         }
         public void OnLimbCut(object o)
         {
-           // ModAPI.Log.Write("Giving Exp for cutting enemy");
             Quests.UpdateActiveQuests(QuestObjective.Type.CutLimbs, 1, QuestObjective.Enemy.None, -1, Quests.HeldWeapon, "");
-            int i = UnityEngine.Random.Range((int)0, 100);
+            int i = UnityEngine.Random.Range(0, 100);
             if (i > 50)
             {
-                int i2 = UnityEngine.Random.Range((int)10, 16);
-                
-                List<CoopPlayerRemoteSetup> setupstoGiveExp = new List<CoopPlayerRemoteSetup>();
-                for (int a = 0; a < CoopExpShare.instance.setup.Count; a++)
+                int xp = UnityEngine.Random.Range((int)8, 16);
+                Vector3 pos = transform.position;
+                int count = TheForest.Utils.Scene.SceneTracker.allPlayers.Count(go => (go.transform.position - pos).sqrMagnitude < 250 * 250);
+                bool giveLocalPlayer = false;
+
+                if ((LocalPlayer.Transform.position - pos).sqrMagnitude < 250 * 250)
                 {
-                 
-                        setupstoGiveExp.Add(CoopExpShare.instance.setup[a]);
-                    
-                }
-                int x = 1;
-                
-                i2 = Mathf.RoundToInt((float)i2 / (x + setupstoGiveExp.Count));
-                for (int a = 0; a < setupstoGiveExp.Count; a++)
-                {
-                    setupstoGiveExp[a].HitShark(-(i2 + 1000000000));
+                    giveLocalPlayer = true;
+                    count++;
                 }
 
-                if (x == 1)
+
+                if (count == 0)
+                    return;
+
+
+                xp = Mathf.RoundToInt((float)xp / (count));
+                Network.NetworkManager.SendExpCommand(xp, pos, false);
+
+                if (giveLocalPlayer)
                 {
-                    UpgradePointsMod.instance.AddXP(i2, false);
+                    UpgradePointsMod.instance.AddXP(xp, false);
                 }
             }
         }
         public void OnAddItem(object o)
         {
-            Quests.UpdateActiveQuests(QuestObjective.Type.GetItem, 1, QuestObjective.Enemy.None,(int)o);
+            Quests.UpdateActiveQuests(QuestObjective.Type.GetItem, 1, QuestObjective.Enemy.None, (int)o);
 
         }
         public void OnCraftItem(object o)
@@ -102,74 +102,64 @@ namespace PlayerUpgradePoints
 
         }
 
-       
+
         public void BirdKilled(object o)
         {
             //ModAPI.Log.Write("Giving Exp for killing bird");
 
-            int i2 = UnityEngine.Random.Range((int)5, 10);
+            int xp = UnityEngine.Random.Range((int)5, 14);
             Quests.UpdateActiveQuests(QuestObjective.Type.Kill, 1, QuestObjective.Enemy.Bird, -1, Quests.HeldWeapon);
 
-           
-            List<CoopPlayerRemoteSetup> setupstoGiveExp = new List<CoopPlayerRemoteSetup>();
-            for (int i = 0; i < CoopExpShare.instance.setup.Count; i++)
+            Vector3 pos = transform.position;
+            int count = TheForest.Utils.Scene.SceneTracker.allPlayers.Count(go => (go.transform.position - pos).sqrMagnitude < 250 * 250);
+            bool giveLocalPlayer = false;
+
+            if ((LocalPlayer.Transform.position - pos).sqrMagnitude < 250 * 250)
             {
-              
-                    setupstoGiveExp.Add(CoopExpShare.instance.setup[i]);
-               
+                giveLocalPlayer = true;
+                count++;
             }
-            int x =1;
 
 
-
-            if (x == 0 && setupstoGiveExp.Count == 0)
-            {
+            if (count == 0)
                 return;
-            }
-            i2 = Mathf.RoundToInt((float)i2 / (x + setupstoGiveExp.Count));
-            for (int a = 0; a < setupstoGiveExp.Count; a++)
-            {
-                setupstoGiveExp[a].HitShark(-(i2 + 1000000000));
-            }
 
-            if (x == 1)
+
+            xp = Mathf.RoundToInt((float)xp / (count));
+            Network.NetworkManager.SendExpCommand(xp, pos, false);
+
+            if (giveLocalPlayer)
             {
-                UpgradePointsMod.instance.AddXP(i2, false);
+                UpgradePointsMod.instance.AddXP(xp, false);
             }
         }
         public void SharkKilled(object o)
         {
             //ModAPI.Log.Write("Giving Exp for killing shark");
 
-            int i2 = UnityEngine.Random.Range((int)80, 150);
+            int xp = UnityEngine.Random.Range((int)110, 180);
             Quests.UpdateActiveQuests(QuestObjective.Type.Kill, 1, QuestObjective.Enemy.Shark, -1, Quests.HeldWeapon);
-            GameObject gameObjectO = (GameObject)o;
-            Transform t = gameObjectO.transform;
-            List<CoopPlayerRemoteSetup> setupstoGiveExp = new List<CoopPlayerRemoteSetup>();
-            for (int i = 0; i < CoopExpShare.instance.setup.Count; i++)
+            Vector3 pos = transform.position;
+            int count = TheForest.Utils.Scene.SceneTracker.allPlayers.Count(go => (go.transform.position - pos).sqrMagnitude < 250 * 250);
+            bool giveLocalPlayer = false;
+
+            if ((LocalPlayer.Transform.position - pos).sqrMagnitude < 250 * 250)
             {
-                if (Vector3.Distance(CoopExpShare.instance.setup[i].transform.position, t.position) < 300)
-                {
-                    setupstoGiveExp.Add(CoopExpShare.instance.setup[i]);
-                }
-            }
-            int x = 0;
-            if (Vector3.Distance(LocalPlayer.Transform.position, transform.position) < 300)
-            {
-                x = 1;
+                giveLocalPlayer = true;
+                count++;
             }
 
 
+            if (count == 0)
+                return;
 
-            i2 = Mathf.RoundToInt((float)i2 / (x + setupstoGiveExp.Count));
-            for (int a = 0; a < setupstoGiveExp.Count; a++)
-            {
-                setupstoGiveExp[a].HitShark(-(i2 + 1000000000));
-            }
 
-            if (x==1)
+            xp = Mathf.RoundToInt((float)xp / (count));
+            Network.NetworkManager.SendExpCommand(xp, pos, false);
+
+            if (giveLocalPlayer)
             {
-                UpgradePointsMod.instance.AddXP(i2, false);
+                UpgradePointsMod.instance.AddXP(xp, false);
             }
         }
 

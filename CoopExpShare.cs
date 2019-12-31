@@ -24,44 +24,17 @@ namespace PlayerUpgradePoints
 {
     public class CoopExpShare : MonoBehaviour
     {
-
-        public static CoopExpShare instance = null;
-
-        public List<CoopPlayerRemoteSetup> setup;
-
         public void Start()
         {
             if (GameSetup.IsMpClient)
             {
                 Destroy(gameObject);
             }
-            InvokeRepeating("DelayedStart", 30, 5);
-            setup = new List<CoopPlayerRemoteSetup>();
             EventRegistry.Enemy.Subscribe(TfEvent.KilledEnemy, OnEnemyKilledMod);
 
 
         }
 
-        void DelayedStart()
-        {
-            if (GameSetup.IsMpServer)
-            {
-
-                setup.Clear();
-                for (int i = 0; i < TheForest.Utils.Scene.SceneTracker.allPlayerEntities.Count; i++)
-                {
-                    BoltEntity o = TheForest.Utils.Scene.SceneTracker.allPlayerEntities[i];
-                    if (o.isAttached && o.StateIs<IPlayerState>() && (LocalPlayer.Entity != o && o.gameObject.activeSelf && o.gameObject.activeInHierarchy))
-                    {
-                        CoopPlayerRemoteSetup s = o.GetComponent<CoopPlayerRemoteSetup>();
-                        if (s != null)
-                        {
-                            setup.Add(s);
-                        }
-                    }
-                }
-            }
-        }
         public void OnEnemyKilledMod(object o)
         {
             EnemyHealth hp = (EnemyHealth)o;
@@ -71,7 +44,7 @@ namespace PlayerUpgradePoints
                 mutantAI ai = hp.gameObject.GetComponent<mutantAI>();
                 if (ai != null)
                 {
-                 
+
                     if (hp.Health <= 0)
                     {
                         /*
@@ -292,67 +265,29 @@ namespace PlayerUpgradePoints
                         }
                         float r = UnityEngine.Random.Range(0.75f, 2f);
                         xppoints = Mathf.RoundToInt(r * xppoints);
-                        ModAPI.Console.Write("Enemy died,sending exp");
 
-                        List<CoopPlayerRemoteSetup> setupstoGiveExp = new List<CoopPlayerRemoteSetup>();
-                        for (int i = 0; i < setup.Count; i++)
+                        Vector3 pos = ai.transform.position;
+                        int count = TheForest.Utils.Scene.SceneTracker.allPlayers.Count(go => (go.transform.position - pos).sqrMagnitude < 250 * 250);
+                        bool giveLocalPlayer = false;
+
+                        if ((LocalPlayer.Transform.position - pos).sqrMagnitude < 250 * 250)
                         {
-                            try
-                            {
-                                if (Vector3.Distance(setup[i].transform.position, hp.transform.position) < 300)
-                                {
-                                    setupstoGiveExp.Add(setup[i]);
-                                }
-                            }
-                            catch
-                            {
-                                ModAPI.Console.Write("Error with checking distance parameter for a clinet");
-                            }
+                            giveLocalPlayer = true;
+                            count++;
                         }
-                        int x = 0;
-                        try
-                        {
-                            if (Vector3.Distance(LocalPlayer.Transform.position, hp.transform.position) < 300)
-                            {
-                                x = 1;
-                            }
-                    }
-                            catch
-                    {
-                        ModAPI.Console.Write("Error with checking distance parameter for the local player");
-                    }
-                    if (x==0 && setupstoGiveExp.Count == 0)
-                        {
+
+
+                        if (count == 0)
                             return;
-                        }
 
-                        xppoints = Mathf.RoundToInt((float)xppoints / (x + setupstoGiveExp.Count));
-                        for (int a = 0; a < setupstoGiveExp.Count; a++)
-                        {
-                            try
-                            {
+                        xppoints = Mathf.RoundToInt((float)xppoints / (count));
 
 
+                        if (giveLocalPlayer)
+                            UpgradePointsMod.instance.AddXP(xppoints, true);
 
-                                setupstoGiveExp[a].HitShark(-xppoints);
-                            }
-                            catch
-                            {
-                                ModAPI.Console.Write("Error with hitting clinet");
-                            }
-                        }
-
-                        if (x == 1)
-                        {
-                            try
-                            {
-                                UpgradePointsMod.instance.AddXP(xppoints, true);
-                            }
-                            catch
-                            {
-                                ModAPI.Console.Write("Error with hitting local player");
-                            }
-                        }
+                        Network.NetworkManager.SendExpCommand(xppoints, pos, true);
+                    
                     }
                 }
             }

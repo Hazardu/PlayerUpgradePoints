@@ -21,6 +21,7 @@ namespace PlayerUpgradePoints
         }
         public static void UpdateActiveQuests(QuestObjective.Type type, float amount, QuestObjective.Enemy killname = QuestObjective.Enemy.None, int itemid= -1, QuestObjective.Weapon weaponusedid = QuestObjective.Weapon.None, string buildingname="")
         {
+            return;
             for (int i = 0; i < quests_active.Count; i++)
             {
                 quests_active[i].UpdateObjective(type, amount, killname, itemid, weaponusedid, buildingname);
