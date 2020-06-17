@@ -2858,12 +2858,10 @@ namespace PlayerUpgradePoints
                         }
                         else
                         {
-
-
-                            EnemyHealth eh = hits[i].transform.GetComponent<EnemyHealth>();
+                            EnemyHealthMod eh = hits[i].transform.GetComponent<EnemyHealthMod>();
                             if (eh == null)
                             {
-                                eh = hits[i].transform.GetComponentInParent<EnemyHealth>();
+                                eh = hits[i].transform.GetComponentInParent<EnemyHealthMod>();
                                 ModAPI.Log.Write("getting in parrent");
                             }
                             if (eh != null)
