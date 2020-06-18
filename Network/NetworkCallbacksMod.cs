@@ -18,6 +18,10 @@ namespace PlayerUpgradePoints.Network
             }
             if (evnt.Sender == NetworkChatMod.ModNetworkID)
             {
+                //Chat events work like this
+                //Client sends a event to the host that a msg is sent;
+                //The host broadcasts the message to everyone
+                ModAPI.Log.Write("Command recieved NetworkCallbacksMod");
                 return;
             }
 
