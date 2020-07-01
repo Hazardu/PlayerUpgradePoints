@@ -11,17 +11,19 @@ namespace PlayerUpgradePoints.Network
     {
         public override void OnEvent(ChatEvent evnt)
         {
-
-            if (!this.ValidateSender(evnt, global::SenderTypes.Any))
-            {
-                return;
-            }
             if (evnt.Sender == NetworkChatMod.ModNetworkID)
             {
                 //Chat events work like this
                 //Client sends a event to the host that a msg is sent;
                 //The host broadcasts the message to everyone
-                ModAPI.Log.Write("Command recieved NetworkCallbacksMod");
+                NetworkManager.RecieveCommand(NetworkManager.StringToBytes(evnt.Message));
+
+                //ModAPI.Log.Write("Command recieved NetworkCallbacksMod");
+                return;
+            }
+
+            if (!this.ValidateSender(evnt, global::SenderTypes.Any))
+            {
                 return;
             }
 

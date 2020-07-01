@@ -30,7 +30,7 @@ namespace PlayerUpgradePoints
 
                 Quests.UpdateActiveQuests(QuestObjective.Type.CutTree, 1, QuestObjective.Enemy.None, -1, Quests.HeldWeapon, "");
 
-                int xp = UnityEngine.Random.Range((int)8, 20);
+                int xp = UnityEngine.Random.Range((int)15, 25);
                 Vector3 pos = transform.position;
                 int count = TheForest.Utils.Scene.SceneTracker.allPlayers.Count(go => (go.transform.position - pos).sqrMagnitude < 250 * 250);
                 bool giveLocalPlayer = false;
@@ -56,7 +56,6 @@ namespace PlayerUpgradePoints
             }
             catch (Exception ex)
             {
-
                 ModAPI.Log.Write(ex.ToString());
             }
         }
@@ -137,7 +136,7 @@ namespace PlayerUpgradePoints
         {
             //ModAPI.Log.Write("Giving Exp for killing shark");
 
-            int xp = UnityEngine.Random.Range((int)110, 180);
+            int xp = UnityEngine.Random.Range((int)390, 450);
             Quests.UpdateActiveQuests(QuestObjective.Type.Kill, 1, QuestObjective.Enemy.Shark, -1, Quests.HeldWeapon);
             Vector3 pos = transform.position;
             int count = TheForest.Utils.Scene.SceneTracker.allPlayers.Count(go => (go.transform.position - pos).sqrMagnitude < 250 * 250);

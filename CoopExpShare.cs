@@ -285,7 +285,6 @@ namespace PlayerUpgradePoints
 
                         if (giveLocalPlayer)
                             UpgradePointsMod.instance.AddXP(xppoints, true);
-                        ModAPI.Console.Write("Sending exp, enemy died");
                         Network.NetworkManager.SendExpCommand(xppoints, pos, true);
                     
                     }

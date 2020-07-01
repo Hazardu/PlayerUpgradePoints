@@ -12,23 +12,21 @@ namespace PlayerUpgradePoints.Network
 {
     public class NetworkChatMod : ChatBox
     {
-        public const ulong ModNetworkPacked = 999999424;
+        public const ulong ModNetworkPacked = 999999421;
         public readonly static NetworkId ModNetworkID = new NetworkId(ModNetworkPacked);
 
-        public override void AddLine(NetworkId? playerId, string message, bool system)
-        {
+        //public override void AddLine(NetworkId? playerId, string message, bool system)
+        //{
 
-            if (playerId == ModNetworkID)
-            {
-                ModAPI.Log.Write("Command recieved NetworkChatMod - "+ message);
-
-                NetworkManager.RecieveCommand(NetworkManager.StringToBytes(message));
-            }
-            else
-            {
-                base.AddLine(playerId, message, system);
-            }
-        }
+        //    if (playerId.HasValue && playerId == ModNetworkID)
+        //    {
+        //        NetworkManager.RecieveCommand(NetworkManager.StringToBytes(message));
+        //    }
+        //    else
+        //    {
+        //        base.AddLine(playerId, message, system);
+        //    }
+        //}
     }
     public class NetworkInformation : MonoBehaviour
     {
@@ -69,7 +67,7 @@ namespace PlayerUpgradePoints.Network
         /// <param name="target">Choose between possible recievers</param>
         public static void SendCommand(byte[] bytearray, GlobalTargets target)
         {
-            if (!GameSetup.IsSinglePlayer && BoltNetwork.isRunning)
+            if (BoltNetwork.isRunning)
             {
                     ChatEvent chatEvent = ChatEvent.Create(target);
                     string s = BytesToString(bytearray);
@@ -105,7 +103,7 @@ namespace PlayerUpgradePoints.Network
                         w.Write(countToMassacre);
                         w.Close();
                     }
-                    SendCommand(stream.ToArray(), GlobalTargets.AllClients);
+                    SendCommand(stream.ToArray(), GlobalTargets.Others);
                     stream.Close();
                 }
             }
@@ -117,19 +115,24 @@ namespace PlayerUpgradePoints.Network
 
         public static void RecieveCommand(byte[] b)
         {
-            ModAPI.Log.Write("Parsing command");
             using (MemoryStream stream = new MemoryStream(b))
             {
                 using (BinaryReader r = new BinaryReader(stream))
                 {
                     int cmdIndex = r.ReadInt32();
-
-                    switch (cmdIndex)
-                    {
-                        case 1:
-                            Cmd_RecieveExp(r);
-                            break;
-                    }
+					try
+					{
+                        switch (cmdIndex)
+                        {
+                            case 1:
+                                Cmd_RecieveExp(r);
+                                break;
+                        }
+					}
+					catch (Exception e)
+					{
+                        ModAPI.Log.Write("Network error: " + cmdIndex + "\n\n" + e.ToString());
+					}
                     r.Close();
                 }
                 stream.Close();
@@ -142,7 +145,6 @@ namespace PlayerUpgradePoints.Network
         //Command 1 - recieve experience
         static void Cmd_RecieveExp(BinaryReader r)
         {
-            ModAPI.Log.Write("Adding experience Cmd_RecieveExp");
 
             int amount = r.ReadInt32();
             Vector3 pos = new Vector3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());
