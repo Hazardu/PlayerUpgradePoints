@@ -270,7 +270,6 @@ namespace PlayerUpgradePoints
                     UpgradePointsMod.instance.FocusFireTarget = target.gameObject;
                 }
             }
-           // ModAPI.Console.Write("Ranged hitting " + target.parent.name);
 
 
 

@@ -10,23 +10,10 @@ using UnityEngine;
 
 namespace PlayerUpgradePoints.Network
 {
-    public class NetworkChatMod : ChatBox
+    public class NetworkConfig
     {
         public const ulong ModNetworkPacked = 999999421;
         public readonly static NetworkId ModNetworkID = new NetworkId(ModNetworkPacked);
-
-        //public override void AddLine(NetworkId? playerId, string message, bool system)
-        //{
-
-        //    if (playerId.HasValue && playerId == ModNetworkID)
-        //    {
-        //        NetworkManager.RecieveCommand(NetworkManager.StringToBytes(message));
-        //    }
-        //    else
-        //    {
-        //        base.AddLine(playerId, message, system);
-        //    }
-        //}
     }
     public class NetworkInformation : MonoBehaviour
     {
@@ -46,16 +33,23 @@ namespace PlayerUpgradePoints.Network
 
     public static class NetworkManager
     {
-        public static byte[] StringToBytes(string s)
+        public static byte[] StringToBytes(string cmd)
         {
-            byte[] bytes = Encoding.ASCII.GetBytes(s);
-       
-            return bytes;
+            var a = cmd.ToCharArray();
+            var b = new byte[a.Length];
+            for (int i = 0; i < a.Length; i++)
+            {
+                b[i] = (byte)a[i];
+            }
+            return b;
         }
-        public static string BytesToString(byte[] bytes)
+        public static string BytesToString(byte[] b)
         {
-          string s= Encoding.ASCII.GetString(bytes);
-
+            string s = string.Empty;
+            for (int i = 0; i < b.Length; i++)
+            {
+                s += (char)b[i];
+            }
             return s;
         }
 
@@ -70,11 +64,9 @@ namespace PlayerUpgradePoints.Network
             if (BoltNetwork.isRunning)
             {
                     ChatEvent chatEvent = ChatEvent.Create(target);
-                    string s = BytesToString(bytearray);
-                    chatEvent.Message =s;
-                    chatEvent.Sender = NetworkChatMod.ModNetworkID;
+                    chatEvent.Message = BytesToString(bytearray);
+                    chatEvent.Sender = NetworkConfig.ModNetworkID;
                     chatEvent.Send();
-                    ModAPI.Console.Write("Sent message " + s);
             }
         }
 
@@ -90,7 +82,6 @@ namespace PlayerUpgradePoints.Network
         {
             if (GameSetup.IsMpServer)
             {
-                ModAPI.Console.Write("Sending exp to clients");
                 using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
                 {
                     using (System.IO.BinaryWriter w = new System.IO.BinaryWriter(stream))

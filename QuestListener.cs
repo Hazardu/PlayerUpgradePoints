@@ -104,7 +104,6 @@ namespace PlayerUpgradePoints
 
         public void BirdKilled(object o)
         {
-            //ModAPI.Log.Write("Giving Exp for killing bird");
 
             int xp = UnityEngine.Random.Range((int)5, 14);
             Quests.UpdateActiveQuests(QuestObjective.Type.Kill, 1, QuestObjective.Enemy.Bird, -1, Quests.HeldWeapon);
@@ -134,8 +133,6 @@ namespace PlayerUpgradePoints
         }
         public void SharkKilled(object o)
         {
-            //ModAPI.Log.Write("Giving Exp for killing shark");
-
             int xp = UnityEngine.Random.Range((int)390, 450);
             Quests.UpdateActiveQuests(QuestObjective.Type.Kill, 1, QuestObjective.Enemy.Shark, -1, Quests.HeldWeapon);
             Vector3 pos = transform.position;

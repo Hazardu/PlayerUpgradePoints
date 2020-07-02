@@ -81,7 +81,6 @@ namespace PlayerUpgradePoints
         }
         protected override void setupHeldWeapon()
         {
-            ModAPI.Console.Write(this.ToString() + " " + name + ", " + transform.parent.name + ", " + transform.root.name, "Held Weapon");
             if (transform.parent.name == "TennisRacketHeld")
             {
                 Quests.HeldWeapon = QuestObjective.Weapon.Tennis;
@@ -721,7 +720,6 @@ namespace PlayerUpgradePoints
                                 num2 *= 2.5f;
                             }
                         }
-                        // ModAPI.Console.Write("Melee hitting " + other.transform.parent.name);
 
                         num2 *= BrawlerUpgrade.DamageBonus + 1;
 
@@ -1012,7 +1010,6 @@ namespace PlayerUpgradePoints
                                     num3 *= 2.5f;
                                 }
                             }
-                            // ModAPI.Console.Write("Melee hitting " + other.transform.parent.name);
 
                             num3 *= BrawlerUpgrade.DamageBonus + 1;
 
