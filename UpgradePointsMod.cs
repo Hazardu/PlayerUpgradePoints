@@ -2846,7 +2846,6 @@ namespace PlayerUpgradePoints
                             if (entity == null)
                             {
                                 entity = hits[i].transform.GetComponentInParent<BoltEntity>();
-                                ModAPI.Log.Write("getting entity in parrent");
                             }
                             if (entity != null)
                             {
@@ -2861,8 +2860,7 @@ namespace PlayerUpgradePoints
                             EnemyHealthMod eh = hits[i].transform.GetComponent<EnemyHealthMod>();
                             if (eh == null)
                             {
-                                eh = hits[i].transform.GetComponentInParent<EnemyHealthMod>();
-                                ModAPI.Log.Write("getting in parrent");
+                                eh = hits[i].transform.GetComponentInParent<EnemyHealth>();
                             }
                             if (eh != null)
                             {
@@ -3191,42 +3189,6 @@ namespace PlayerUpgradePoints
             GUI.DrawTexture(r, ModGui.ProgressBar_Front);
 
         }
-       // private string PlName;
-     /*   public void ChangeName()
-        {
-            string prefix = "( "+Level+" )";
-            if(Level >= 10 && Level < 30)
-            {
-                prefix = "[ " + Level + " ]";
-            }
-            else if (Level >= 30 && Level < 50)
-            {
-                prefix = "{ " + Level + " }";
-            }
-            else if (Level >= 50 && Level < 75)
-            {
-                prefix = "< " + Level + " >";
-
-            }
-            else if (Level >= 75 && Level < 100)
-            {
-                prefix = "▬ " + Level + " ▬";
-
-            }
-            else if (Level >= 100 && Level < 120)
-            {
-                prefix = "♥ " + Level + " ♥";
-
-            }
-            else if (Level >= 120 )
-            {
-                prefix = "♦• " + Level + " •♦";
-
-            }
-            LocalPlayer.Entity.GetState<IPlayerState>().name = prefix + "   " + PlName;
-            LocalPlayer.Transform.GetComponentInChildren<PlayerName>().Init(prefix + "   " + PlName);
-            ModAPI.Log.Write("Player name is " + LocalPlayer.Entity.GetState<IPlayerState>().name);
-        }*/
     }
 }
 

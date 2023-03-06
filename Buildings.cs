@@ -10,7 +10,6 @@ namespace PlayerUpgradePoints
         public override void CreateBuilding(BuildingTypes type)
         {
             base.CreateBuilding(type);
-            ModAPI.Console.Write(type.ToString(), "building finished");
             Quests.UpdateActiveQuests(QuestObjective.Type.BuildObjects, 1, QuestObjective.Enemy.None, -1, QuestObjective.Weapon.None, type.ToString());
         }
     }

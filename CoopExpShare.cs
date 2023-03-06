@@ -285,7 +285,6 @@ namespace PlayerUpgradePoints
 
                         if (giveLocalPlayer)
                             UpgradePointsMod.instance.AddXP(xppoints, true);
-
                         Network.NetworkManager.SendExpCommand(xppoints, pos, true);
                     
                     }

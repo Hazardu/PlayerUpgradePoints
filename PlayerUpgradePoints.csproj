@@ -22,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Exp Sources\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="BaseModLib">
@@ -182,7 +181,7 @@
     <Compile Include="LocalPlayerMod.cs" />
     <Compile Include="ModGui.cs" />
     <Compile Include="Network\NetworkCallbacksMod.cs" />
-    <Compile Include="Network\NetworkChatMod.cs" />
+    <Compile Include="Network\NetworkConfig.cs" />
     <Compile Include="PlayerInventoryMod.cs" />
     <Compile Include="PlayerStatsMod.cs" />
     <Compile Include="QuestListener.cs" />

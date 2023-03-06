@@ -20,14 +20,11 @@ namespace PlayerUpgradePoints
                     for (int i = 0; i < _items.Length; i++)
                     {
 
-
-
-                        //ModAPI.Console.Write("Increasing item with name " + _items[i]._name);
                         switch (_items[i]._id)
                         {
                             case 57:
 
-                                _items[i]._maxAmount += 140;//
+                                _items[i]._maxAmount += 140;
                                 break;
                             case 53:
                                 _items[i]._maxAmount += 70;

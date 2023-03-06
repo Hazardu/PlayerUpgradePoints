@@ -1,5 +1,5 @@
 <Mod ID="PlayerUpgradePoints">
-  <Compatible>1.09</Compatible>
+  <Compatible>1.11b</Compatible>
   <Button Standard="P" ID="ToggleMenu">
     <Name>
       <EN>Toggle Menu</EN>
@@ -14,5 +14,5 @@
   <Description>
     <EN>Leveling just like in RPG game. With extra error logs</EN>
   </Description>
-  <Version>2.7.4.4</Version>
+  <Version>2.9.1</Version>
 </Mod>

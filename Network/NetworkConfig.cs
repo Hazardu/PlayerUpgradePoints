@@ -10,24 +10,10 @@ using UnityEngine;
 
 namespace PlayerUpgradePoints.Network
 {
-    public class NetworkChatMod : ChatBox
+    public class NetworkConfig
     {
-        public const ulong ModNetworkPacked = 999999422;
+        public const ulong ModNetworkPacked = 999999421;
         public readonly static NetworkId ModNetworkID = new NetworkId(ModNetworkPacked);
-
-        [ModAPI.Attributes.Priority(201)]
-        public override void AddLine(NetworkId? playerId, string message, bool system)
-        {
-
-            if (playerId == ModNetworkID)
-            {
-                NetworkManager.RecieveCommand(NetworkManager.StringToBytes(message));
-            }
-            else
-            {
-                base.AddLine(playerId, message, system);
-            }
-        }
     }
     public class NetworkInformation : MonoBehaviour
     {
@@ -47,21 +33,23 @@ namespace PlayerUpgradePoints.Network
 
     public static class NetworkManager
     {
-        public enum Target
+        public static byte[] StringToBytes(string cmd)
         {
-            OnlyServer, Everyone, Clients, Others
+            var a = cmd.ToCharArray();
+            var b = new byte[a.Length];
+            for (int i = 0; i < a.Length; i++)
+            {
+                b[i] = (byte)a[i];
+            }
+            return b;
         }
-
-        public static byte[] StringToBytes(string s)
+        public static string BytesToString(byte[] b)
         {
-            byte[] bytes = Encoding.ASCII.GetBytes(s);
-       
-            return bytes;
-        }
-        public static string BytesToString(byte[] bytes)
-        {
-          string s= Encoding.ASCII.GetString(bytes);
-
+            string s = string.Empty;
+            for (int i = 0; i < b.Length; i++)
+            {
+                s += (char)b[i];
+            }
             return s;
         }
 
@@ -71,38 +59,14 @@ namespace PlayerUpgradePoints.Network
         /// </summary>
         /// <param name="bytearray">Bytes to send</param>
         /// <param name="target">Choose between possible recievers</param>
-        public static void SendLine(byte[] bytearray, Target target = Target.Clients)
+        public static void SendCommand(byte[] bytearray, GlobalTargets target)
         {
-            if (GameSetup.IsSinglePlayer || !BoltNetwork.isRunning)
+            if (BoltNetwork.isRunning)
             {
-                return;
-            }
-            else
-            {
-                if (BoltNetwork.isRunning)
-                {
-                    ChatEvent chatEvent = null;
-                    switch (target)
-                    {
-                        case Target.OnlyServer:
-                            chatEvent = ChatEvent.Create(GlobalTargets.OnlyServer);
-                            break;
-                        case Target.Everyone:
-                            chatEvent = ChatEvent.Create(GlobalTargets.Everyone);
-                            break;
-                        case Target.Clients:
-                            chatEvent = ChatEvent.Create(GlobalTargets.AllClients);
-                            break;
-                        case Target.Others:
-                            chatEvent = ChatEvent.Create(GlobalTargets.Others);
-                            break;
-                        default:
-                            break;
-                    }
+                    ChatEvent chatEvent = ChatEvent.Create(target);
                     chatEvent.Message = BytesToString(bytearray);
-                    chatEvent.Sender = NetworkChatMod.ModNetworkID;
+                    chatEvent.Sender = NetworkConfig.ModNetworkID;
                     chatEvent.Send();
-                }
             }
         }
 
@@ -116,7 +80,7 @@ namespace PlayerUpgradePoints.Network
         /// <param name="countToMassacre"></param>
         public static void SendExpCommand(int expAmount, Vector3 position, bool countToMassacre)
         {
-            if (BoltNetwork.isRunning)
+            if (GameSetup.IsMpServer)
             {
                 using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
                 {
@@ -130,10 +94,11 @@ namespace PlayerUpgradePoints.Network
                         w.Write(countToMassacre);
                         w.Close();
                     }
-                    SendLine(stream.ToArray());
+                    SendCommand(stream.ToArray(), GlobalTargets.Others);
                     stream.Close();
                 }
             }
+
         }
 
 
@@ -146,12 +111,19 @@ namespace PlayerUpgradePoints.Network
                 using (BinaryReader r = new BinaryReader(stream))
                 {
                     int cmdIndex = r.ReadInt32();
-                    switch (cmdIndex)
-                    {
-                        case 1:
-                            Cmd_RecieveExp(r);
-                            break;
-                    }
+					try
+					{
+                        switch (cmdIndex)
+                        {
+                            case 1:
+                                Cmd_RecieveExp(r);
+                                break;
+                        }
+					}
+					catch (Exception e)
+					{
+                        ModAPI.Log.Write("Network error: " + cmdIndex + "\n\n" + e.ToString());
+					}
                     r.Close();
                 }
                 stream.Close();
@@ -164,6 +136,7 @@ namespace PlayerUpgradePoints.Network
         //Command 1 - recieve experience
         static void Cmd_RecieveExp(BinaryReader r)
         {
+
             int amount = r.ReadInt32();
             Vector3 pos = new Vector3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());
             bool countToMassacre = r.ReadBoolean();

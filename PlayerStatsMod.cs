@@ -260,31 +260,6 @@ namespace PlayerUpgradePoints
             base.setStamina(val);
         }
         
-        public override void HitShark(int damage)
-        {
-            if (damage < 0)
-            {
-                if (GameSetup.IsMpClient)
-                {
-                    if(damage <= -1000000000)
-                    {
-                        int d = damage + 1000000000;
-                        UpgradePointsMod.instance.AddXP(-d, false);
-
-                    }
-                    else
-                    {
-                     UpgradePointsMod.instance.AddXP(-damage, true);
-                    ModAPI.Console.Write("Recieving " + -damage + " exp");
-
-                    }
-                }
-            }
-            else
-            {
-                base.HitShark(damage);
-            }
-        }
         protected override void CheckDeath()
         {
             if (!Cheats.GodMode && Health <= 0f && !Dead)
